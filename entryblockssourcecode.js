@@ -1,4 +1,9 @@
-var LibraryCreator = {
+//버전 0.1
+//에이션블록, EntSave블록등을 활용하였습니다. ation, avocad5, thoratica님께 감사드립니다.
+//오픈소스입니다.
+
+var 
+LibraryCreator = {
     start: (blocksJSON, category, text) => {
         let blockArray = new Array
         // LibraryCreator 가져오기
@@ -358,8 +363,384 @@ var LibraryCreator = {
             // 카테고리 이름 적용
             $(`#entryCategory${category}`).append(text)
         }
-        console.log('%c홍보블록의 공식명칭은 게임블록입니다.', 'background-color: #007bff; color: #e9ecef; padding: .7rem; font-family: sans-serif; font-size: .9rem; border-radius: 99999rem;')
-        console.log('%c버전 0.1 ation님과 avocad5님등에게 감사드립니다.', 'font-family: sans-serif; font-size: .7rem')
+        console.log('%c작품블록이 작동시작되었습니다.', 'background-color: #00FF00; color: #e9ecef; padding: .7rem; font-family: sans-serif; font-size: .9rem; border-radius: 99999rem;')
+        console.log('%c버전 0.1 ation님과 avocad5님, thoratica님등에게 감사드립니다.', 'font-family: sans-serif; font-size: .7rem')
     }
 }
 let blockPOST
+
+//블록추가시작
+{
+
+    {
+      name: "text_inform",          //홍보에 유용한 블록
+      template: "%1",
+      skeleton: "basic_text",
+      color: {
+        default: EntryStatic.colorSet.common.TRANSPARENT,
+      },
+      params: [
+        {
+          type: 'Text',
+          text: '홍보',
+          color: '#00FF00',
+          align: 'center'
+        }
+      ],
+      def: [],
+      map: {},
+      class: "inform"
+    },
+      
+      name: "posting",      //특정게시판에 특정내용의 글 올리기(악용금지.악용시 신고)  //에이션블록 참고했습니다. 감사합니다.
+      template: "제목:%1 내용:%2의 글을 %3 게시판에 올리기%4",
+      skeleton: "basic",
+      color: {
+        default: EntryStatic.colorSet.block.default.ANALYSIS
+      },
+      params: [
+        {
+          type: "Block",
+          accept: "string",
+          value: "악용하지"
+        },
+        {
+          type: "Block",
+          accept: "string",
+          value: "마세요"
+        },
+        {
+          type: "Dropdown",
+          options: [
+            ["묻고답하기", 'qna'],
+            ["노하우&팁", 'tips'],
+            ["엔트리 이야기", "free"]
+            ["제안 및 건의", "report"]
+          ],
+          value: "free"
+        },
+        {
+          type: "Indicator",
+          img: "block_icon/block_analysis.svg",
+          size: "11"
+        }
+      ],
+      def: [],
+      map: {
+        TITLE: 0,
+        CONTENT: 1,
+
+        TYPE: 2
+      },
+      class: "posting",
+      func: async(sprite, script) => {
+
+        //게시판 종류 정하기
+        if (script.getValue("TYPE", script) == "qna") {
+          var koreantype = "묻고답하기"
+        } else if (script.getValue("TYPE", script) == "tips") {
+          var koreantype = "노하우&팁"
+        } else if (script.getValue("TYPE", script) == "free") {
+          var koreantype = "엔트리 이야기"
+        } else if (script.getValue("TYPE", script) == "report") {
+          var koreantype = "제안 및 건의"
+        }
+
+
+        if (confirm("koreantype + " 게시판에 글을 올리시겠습니까?(악용방지기능) ") {
+            fetch('https://playentry.org/api/discuss/', {
+                method: 'POST',
+                body: `{ "images": [], "category": "${script.getValue('TYPE', script)}", "title": "${script.getValue('TITLE', script)}", "content": "${script.getValue('CONTENT', script)}", "groupNotice": false }`,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            return script.callReturn()
+        } else {
+          return false
+        }
+
+      } //async 끝 중괄호
+    },
+
+      name: "update",
+      template: "작품 업데이트하기 %1",
+      skeleton: "basic",
+      color: {
+        default: EntryStatic.colorSet.block.default.ANALYSIS
+      },
+  if (confirm('작품을 업데이트하시겠습니까?(악용방지기능)')   //아보카도님의 avo매크로 사용했습니다. 감사드립니다.
+     $('.editDescriptionBtn').trigger('click')
+     $('.editConfirmBtn').trigger('click')
+     console.log('작품이 업데이트되었습니다.')
+
+  else
+     console.log('작품이 업데이트 되지 않았습니다.')
+//작품정보
+    {
+      name: "text_informationofproject",
+      template: "%1",
+      skeleton: "basic_text",
+      color: {
+        default: EntryStatic.colorSet.common.TRANSPARENT,
+      },
+      params: [
+        {
+          type: 'Text',
+          text: '작품 정보',
+          color: '#00FF00',
+          align: 'center'
+        }
+      ],
+      def: [],
+      map: {},
+      class: "inform"
+    },
+
+{
+      name: "getid",
+      template: "작품아이디",     //작품의 아이디 리턴
+      skeleton: "basic_string_field",
+      color: {
+        default: getcolor
+      },
+      params: [
+      ],
+      def: [],
+      map: {
+      },
+      class: "get",
+      func: async(sprite, script) => {
+        return Entry.projectId;
+      }
+    }
+
+ {
+    name: 'likeList',
+    template: '이 작품에 좋아요를 누른 사람수', //좋아요 수 리턴
+    skeleton: 'basic_string_field',
+    color: {
+      default: '#007bff',
+      darken: '#006ce0'
+    },
+    params: [],
+    def: [],
+    map: {},
+    class: 'text',
+    func: async (sprite, script) => {
+      let res = await fetch(`https://playentry.org/api/project/likes/${Entry.projectId}?noCache=1587602931964&rows=99999999&targetSubject=project&targetType=individual`)
+      let data = await res.json()
+      return data.length
+    },
+
+ {
+    name: 'likeList',
+    template: '이 작품에 관심작품을 누른 사람수', //관작 수 리턴
+    skeleton: 'basic_string_field',
+    color: {
+      default: '#007bff',
+      darken: '#006ce0'
+    },
+    params: [],
+    def: [],
+    map: {},
+    class: 'text',
+    func: async (sprite, script) => {
+      let res = await fetch(`https://playentry.org/api/project/interest/${Entry.projectId}?noCache=1587602931964&rows=99999999&targetSubject=project&targetType=individual`)
+      let data = await res.json()
+      return data.length
+    },
+
+//자바스크립트
+    {
+      name: "text_javascript",
+      template: "%1",
+      skeleton: "basic_text",
+      color: {
+        default: EntryStatic.colorSet.common.TRANSPARENT,
+      },
+      params: [
+        {
+          type: 'Text',
+          text: '자바스크립트',
+          color: '#00FF00',
+          align: 'center'
+        }
+      ],
+      def: [],
+      map: {},
+      class: "inform"
+    },
+
+   {
+      name: 'javascriptcode',
+      template: '%1실행 %2',
+      skeleton: 'basic',
+      color: {
+        default: EntryStatic.colorSet.block.default.ANALYSIS
+      },
+      params: [
+        {
+          type: "Block",
+          accept: "string",
+          value: "자바스크립트코드"
+        },
+        {
+          type: "Indicator",
+          img: 'block_icon/block_analysis.svg',
+          size: '11'
+        }
+      ],
+      def: [],
+      map: {
+        VALUE: 0
+      },
+      class: "problock",
+      func: async(sprite, script) => {
+          eval(script.getValue("VALUE", script))
+        }
+      }
+    },
+
+{
+      name: "variable_change",
+      template: "(자바스크립트) 변수 %1의 값을 %2로 정의하기 %3", //여러 비공식블럭 참고했습니다..
+      skeleton: "basic",
+      color: {
+        default: EntryStatic.colorSet.block.default.ANALYSIS
+      },
+      params: [
+        {
+          type: "Block",
+          accept: "string",
+          value: "user.username"
+        },
+        {
+          type: "Block",
+          accept: "string",
+          value: "entry"
+        },
+        {
+          type: "Indicator",
+          img: "block_icon/block_analysis.svg",
+          size: "11"
+        }
+      ],
+      def: [],
+      map: {
+        NAME: 0,
+        CHANGE: 1
+      },
+      class: "problock",
+      func: async(sprite, script) => {
+          let name = script.getValue("NAME", script);
+          let change = script.getValue("CHANGE", script);
+          eval(`${script.getValue('NAME', script)} = '${script.getValue('CHANGE', script)}'`);
+          return script.callReturn();
+      }
+    },
+
+//콘솔
+    {
+      name: "text_javascript",
+      template: "%1",
+      skeleton: "basic_text",
+      color: {
+        default: EntryStatic.colorSet.common.TRANSPARENT,
+      },
+      params: [
+        {
+          type: 'Text',
+          text: '콘솔',
+          color: '#00FF00',
+          align: 'center'
+        }
+      ],
+      def: [],
+      map: {},
+      class: "inform"
+    },
+
+{
+      name: "consolelog",
+      template: "%1내용을 %2 콘솔에 작성하기 %3",
+      skeleton: "basic",
+      color: {
+         default: EntryStatic.colorSet.block.default.ANALYSIS
+      },
+      params: [
+        {
+          type: "Block",
+          accept: "string",
+          value: "엔트리"
+        },
+        {
+          type: "Dropdown",
+          options: [
+            ["엔트리", "console"],
+            ["브라우저", "browser"]
+          ],
+          value: "console"
+        },
+        {
+          type: 'Indicator',
+          img: 'block_icon/block_analysis.svg',
+          size: 11
+        }
+      ],
+      def: [],
+      map: {
+        LEFTHAND: 0,
+        RIGHTHAND: 1
+      },
+      class: "console",
+      func: async(sprite, script) => {
+        if (script.getValue("RIGHTHAND", script) == "console") {
+          Entry.console.print(script.getValue("LEFTHAND", script));
+        } else if (script.getValue("RIGHTHAND", script) == "browser") {
+          console.log(script.getValue("LEFTHAND", script));
+        }
+      }
+
+    },
+
+
+    {
+      name: "clearconsole",
+      template: "%1 콘솔의 내용모두 지우기 %2",
+      skeleton: "basic",
+      color: {
+        default: EntryStatic.colorSet.block.default.ANALYSIS
+      },
+      params: [
+        {
+          type: "Dropdown",
+          options: [
+            ["엔트리", "console"],
+            ["브라우저", "browser"]
+          ],
+          value: "console"
+        },
+        {
+          type: 'Indicator',
+          img: 'block_icon/block_analysis.svg',
+          size: 11
+        }
+      ],
+      def: [],
+      map: {
+        VALUE: 0
+      },
+      class: "console",
+      func: async(sprite, script) => {
+        if (script.getValue("VALUE", script) == "console") {
+          Entry.console.clear()
+        } else if (script.getValue("VALUE", script) == "browser") {
+          console.clear()
+        }
+      }
+
+    },
+
+LibraryCreator.start(blocks, 'API', '작품') //원하는 이름을 입력하세요 :)
+document.title = "작품블록이 사용되고 있습니다.";
